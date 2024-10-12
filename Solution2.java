@@ -18,30 +18,39 @@
  */
 class Solution2 {
     public String removeDuplicateLetters(String s) {
-        boolean[] vis = new boolean[25];
-        int[] num = new int[25];
+        boolean[] vis = new boolean[26];  // 使用26个元素来表示字母的存在状态
+        int[] num = new int[26];  // 使用26个元素来统计字母出现的次数
+
+        // 统计每个字母的出现次数
         for (int i = 0; i < s.length(); i++) {
-            num[s.charAt(i) - ' ']++;
+            num[s.charAt(i) - 'a']++;
         }
 
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < s.length()+1; i++) {
+        // 遍历字符串
+        for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
-            if (!vis[ch - ' ']) {
-                while (sb.length() > 0 && sb.charAt(sb.length() - 1) > ch) {
-                    if (num[sb.charAt(sb.length() - 1) - 'a'] > 0) {
-                        vis[sb.charAt(sb.length() - 1) - 'a'] = false;
-                        sb.deleteCharAt(sb.length() - 1);
-                    } else {
-                        break;
-                    }
-                }
-                vis[ch - 'a'] = true;
-                sb.append(ch);
+            // 每遍历一个字母，减去它的剩余次数
+            num[ch - 'a']--;
+
+            // 如果该字母已经在结果中，跳过
+            if (vis[ch - 'a']) {
+                continue;
             }
-            num[ch - 'a'] += 1;
+
+            // 保证字典序最小，移除比当前字母大的，并且后面还有的字母
+            while (sb.length() > 0 && sb.charAt(sb.length() - 1) > ch && num[sb.charAt(sb.length() - 1) - 'a'] > 0) {
+                vis[sb.charAt(sb.length() - 1) - 'a'] = false;
+                sb.deleteCharAt(sb.length() - 1);
+            }
+
+            // 添加当前字母到结果，并标记为已访问
+            sb.append(ch);
+            vis[ch - 'a'] = true;
         }
+
         return sb.toString();
     }
 }
+
 
